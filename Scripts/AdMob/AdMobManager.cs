@@ -24,7 +24,6 @@ namespace AdSystem
         }
 
         //"ca-app-pub-3940256099942544/5224354917"; // 구글 공식 테스트 보상형 광고 Id
-        //"ca-app-pub-4539098097982391/3810561531"  // 현재 사용 중인 광고 단위 Id
         [SerializeField]
         private string appId = "ca-app-pub-4539098097982391~8628198975";
         [SerializeField]
