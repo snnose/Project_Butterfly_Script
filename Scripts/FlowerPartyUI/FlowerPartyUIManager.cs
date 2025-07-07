@@ -13,6 +13,7 @@ public class FlowerPartyUIManager : MonoBehaviour
     [SerializeField] public GameObject partyEdit;
     // Inspector에서 할당할 UI 관련 참조들
     public Canvas flowerPartyUICanvas;
+    [SerializeField] private FlowerPartySwipe flowerPartySwipe;
     [SerializeField] public GameObject background;            // 배경
     [SerializeField] public RectTransform partyBackgrounds;       // 파티 UI 배경들이 들어갈 부모 컨테이너 (GridLayoutGroup이 붙어있음)
     [SerializeField] public GameObject partyBackground;       // 파티 UI 배경 프리팹
@@ -25,6 +26,9 @@ public class FlowerPartyUIManager : MonoBehaviour
     // 초기 로드 플래그
     private bool isInitialized = false;
     [SerializeField] private float backgroundYSpacing = 250f;
+    [SerializeField] private int maxPresetCount = 5;
+
+    [SerializeField] private int currentPresetNumber;
 
     /*
     // UI 요소들을 동적으로 생성하는 메서드
@@ -62,6 +66,20 @@ public class FlowerPartyUIManager : MonoBehaviour
     {
         if (isInitialized)
             return;
+
+        int selectedNumber = FindSelectedNumber();
+        flowerPartySwipe.InitializePartySwipe(selectedNumber);
+        InstantiateFlowerParty(selectedNumber);
+        SetFlowerParty(selectedNumber);
+
+        isInitialized = true;
+    }
+
+    /*
+    public void InitializeFlowerPartyUI()
+    {
+        if (isInitialized)
+            return;
       
         int selectedNumber = FindSelectedNumber();
         InstantiateBackground(selectedNumber);
@@ -69,10 +87,11 @@ public class FlowerPartyUIManager : MonoBehaviour
         DOMoveBackgrounds(selectedNumber, 0f);
         DOScaleBackgrounds(selectedNumber, 0f);
         InstantiateFlowerParty(selectedNumber);
+        SetFlowerParty(selectedNumber);
 
         isInitialized = true;
     }
-
+    */
     public IEnumerator SwitchFlowerPartyUI(int targetNumber, float duration)
     {
         flowerParty.SetActive(false);
@@ -80,7 +99,7 @@ public class FlowerPartyUIManager : MonoBehaviour
         CompleteTweens();
         DOMoveBackgrounds(targetNumber, duration);
         DOScaleBackgrounds(targetNumber, duration);
-        ChangeFlowerParty(targetNumber);
+        SetFlowerParty(targetNumber);
         SetIsSelected(targetNumber);
 
         yield return new WaitForSeconds(duration);
@@ -99,7 +118,7 @@ public class FlowerPartyUIManager : MonoBehaviour
     
     private void InstantiateBackground(int selectedNumber)
     {
-        int count = UserFlowerBouquetData.userFlowerBouquetListDictionary.Count;
+        int count = maxPresetCount;
 
         for (int i = 0; i < count; i++)
         {
@@ -115,15 +134,11 @@ public class FlowerPartyUIManager : MonoBehaviour
     {
         int selectedNumber = -1;
 
-        int count = UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary.Count;
-
-        for (int i = 0; i < count; i++)
+        foreach (KeyValuePair<int, bool> isSelected in UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary)
         {
-            // isSelected
-            if (UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[i + 1])
+            if (isSelected.Value)
             {
-                selectedNumber = i + 1;
-                break;
+                selectedNumber = isSelected.Key;
             }
         }
 
@@ -132,15 +147,13 @@ public class FlowerPartyUIManager : MonoBehaviour
 
     private void SetIsSelected(int selectedNumber)
     {
+        UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[selectedNumber] = true;
+
         int count = UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary.Count;
 
         for (int i = 0; i < count; i++)
         {
-            if (selectedNumber == i + 1)
-            {
-                UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[i + 1] = true;
-            }
-            else
+            if (selectedNumber != i + 1)
             {
                 UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[i + 1] = false;
             }
@@ -178,18 +191,40 @@ public class FlowerPartyUIManager : MonoBehaviour
 
     private void InstantiateFlowerParty(int selectedNumber)
     {
-        int[] bouquetList = UserFlowerBouquetData.userFlowerBouquetListDictionary[selectedNumber];
-
         FlowerPartyUI flowerPartyUI = flowerParty.GetComponent<FlowerPartyUI>();
-        flowerPartyUI.InitializeFlowerBouquetUI(selectedNumber, bouquetList);
+
+        if (UserFlowerBouquetData.userFlowerBouquetListDictionary.ContainsKey(selectedNumber))
+        {
+            flowerPartyUI.InitializeFlowerBouquetUI(selectedNumber);
+        }
+        else
+        {
+            flowerPartyUI.SetAddPresetButtonActive(true);
+        }
     }
 
-    private void ChangeFlowerParty(int selectedNumber)
+    public void SetFlowerParty(int selectedNumber)
     {
-        int[] bouquetList = UserFlowerBouquetData.userFlowerBouquetListDictionary[selectedNumber];
-
         FlowerPartyUI flowerPartyUI = flowerParty.GetComponent<FlowerPartyUI>();
-        flowerPartyUI.SetFlowerBouquetUI(selectedNumber, bouquetList);
+
+        // selectedNumber번 프리셋이 있다면 해당 프리셋을 출력
+        if (UserFlowerBouquetData.userFlowerBouquetListDictionary.ContainsKey(selectedNumber))
+        {
+            int[] bouquetList = UserFlowerBouquetData.userFlowerBouquetListDictionary[selectedNumber];
+
+            flowerPartyUI.SetFlowerBouquetUI(selectedNumber, bouquetList);
+            flowerPartyUI.SetAddPresetButtonActive(false);
+        }
+        // 없다면 AddButton을 보여준다
+        else
+        {
+            flowerPartyUI.SetAddPresetButtonActive(true);
+        }
+    }
+
+    public void SetCurrentPresetNumber(int presetNumber)
+    {
+        this.currentPresetNumber = presetNumber;
     }
 
     public void SetBackgroundActive(bool isActive)
@@ -200,5 +235,15 @@ public class FlowerPartyUIManager : MonoBehaviour
     public void SetFlowerPartyActive(bool isActive)
     {
         flowerParty.SetActive(isActive);
+    }
+
+    public int GetCurrentPresetNumber()
+    {
+        return this.currentPresetNumber;
+    }
+
+    public List<FlowerPartyBackground> GetFlowerPartyBackgrounds()
+    {
+        return this.flowerPartyBackgroundList;
     }
 }

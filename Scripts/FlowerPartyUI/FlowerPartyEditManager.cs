@@ -18,10 +18,14 @@ public class FlowerPartyEditManager : MonoBehaviour
     public FlowerPartyPlayFabUpdate flowerPartyPlayFabUpdate;
 
     [Header("PartySlots")]
-    public List<FlowerBouquetUI> partyBouquetSlotList = new List<FlowerBouquetUI>();
+    public List<FlowerBouquetPartyUI> partyBouquetSlotList = new List<FlowerBouquetPartyUI>();
 
     [Header("FocusSlot")]
-    public FlowerBouquetUI focusBouquetSlot;
+    public GameObject focusSlotUI;
+    public FlowerBouquetPartyUI focusBouquetSlot;
+    [SerializeField] private FlowerItemUI.FlowerItemSpecificUI flowerItemSpecific;
+    [SerializeField] private bool isInformationUI = false;
+    [SerializeField] private float rotateDuration;
 
     [Header("FlowerItemSlots")]
     public Transform itemContainer;
@@ -33,12 +37,19 @@ public class FlowerPartyEditManager : MonoBehaviour
     [SerializeField] private int[] editBouquetList = new int[5];
 
     [Header("Swap Option")]
-    [SerializeField] private FlowerBouquetUI catchedBouquet;
+    [SerializeField] private FlowerBouquetPartyUI catchedBouquet;
     public float maxDropDistance;
 
     private void OnEnable()
     {
         catchedBouquet = null;
+        flowerItemSpecific.ClearItemSpecificUI();
+
+        focusSlotUI.transform.DORotate(Vector3.zero, 0f);
+        focusSlotUI.SetActive(true);
+
+        flowerItemSpecific.transform.DORotate(new Vector3(0, 90f, 0), 0f);
+        flowerItemSpecific.gameObject.SetActive(false);
     }
     public void SetFlowerItemSlots()
     {
@@ -72,7 +83,7 @@ public class FlowerPartyEditManager : MonoBehaviour
                 newItem.SetActive(true);
             }
 
-            FlowerBouquetUI flowerBouquetUI = newItem.GetComponent<FlowerBouquetUI>();
+            FlowerBouquetPartyUI flowerBouquetUI = newItem.GetComponent<FlowerBouquetPartyUI>();
             flowerBouquetUI.SetBouquetUIType(BouquetUIType.Item);
             flowerBouquetUI.SetFlowerBlockUI(flowerBouquetId);
         }
@@ -124,7 +135,7 @@ public class FlowerPartyEditManager : MonoBehaviour
         Debug.Log("SetFocusSlot");
         focusBouquetSlot.SetFlowerBlockUI(bouquetId);
     }
-    public FlowerBouquetUI GetFocusSlot()
+    public FlowerBouquetPartyUI GetFocusSlot()
     {
         return focusBouquetSlot;
     }
@@ -151,7 +162,7 @@ public class FlowerPartyEditManager : MonoBehaviour
         Debug.Log("SetFlowerBouquet");
         GameObject item = Instantiate(bouquetSlot, partyBouquetSlotContainer);
         item.SetActive(true);
-        FlowerBouquetUI flowerBouquetUI = item.GetComponent<FlowerBouquetUI>();
+        FlowerBouquetPartyUI flowerBouquetUI = item.GetComponent<FlowerBouquetPartyUI>();
         partyBouquetSlotList.Add(flowerBouquetUI);
         flowerBouquetUI.SetBouquetUIType(BouquetUIType.Party);
         flowerBouquetUI.SetFlowerBlockUI(bouquetId, slotNumber);
@@ -199,6 +210,7 @@ public class FlowerPartyEditManager : MonoBehaviour
     {
         ReleaseBouquet(slotNumber);
         EquipBouquet(slotNumber);
+        StopShakePartySlots();
     }
     private void EquipBouquet(int slotNumber)
     {
@@ -210,7 +222,9 @@ public class FlowerPartyEditManager : MonoBehaviour
 
         editBouquetList[index] = bouquetId;
         SetPartySlot(bouquetId, slotNumber);
-        flowerItemDictionary[bouquetId].SetActive(false);
+
+        if (flowerItemDictionary.ContainsKey(bouquetId))
+            flowerItemDictionary[bouquetId].SetActive(false);
     }
     /// <summary>
     /// slotNumber번 자리 Bouquet을 장착 해제합니다
@@ -220,7 +234,8 @@ public class FlowerPartyEditManager : MonoBehaviour
         int index = slotNumber - 1;
         int bouquetId = editBouquetList[index];
 
-        flowerItemDictionary[bouquetId].SetActive(true);
+        if (flowerItemDictionary.ContainsKey(bouquetId))
+            flowerItemDictionary[bouquetId].SetActive(true);
     }
 
     /// <summary>
@@ -234,6 +249,55 @@ public class FlowerPartyEditManager : MonoBehaviour
         UserFlowerBouquetData.userFlowerBouquetListDictionary[editPresetNumber] = replaceBouquetList;
         // UI 편성 정보 변경
         UIManager.Instance.flowerPartyUIManager.flowerParty.GetComponent<FlowerPartyUI>().SetFlowerBouquetUI(editPresetNumber, editBouquetList);
+    }
+    /// <summary>
+    /// PartySlot에 등록된 부케 슬롯이 흔들립니다.
+    /// </summary>
+    public void StartShakePartySlots()
+    {
+        foreach (FlowerBouquetPartyUI partyBouquetSlot in partyBouquetSlotList)
+        {
+            partyBouquetSlot.StartShakeBouquetUI(3f, 0.5f, 10f);
+        }
+    }
+    public void StopShakePartySlots()
+    {
+        foreach (FlowerBouquetPartyUI partyBouquetSlot in partyBouquetSlotList)
+        {
+            partyBouquetSlot.StopShakeBouqeutUI();
+        }
+    }
+
+    public void OnClickFocusSlot()
+    {
+        if (focusBouquetSlot.GetBouquetId() == 0)
+            return;
+
+        Vector3 vertical = new Vector3(0f, 90f, 0f);
+        Vector3 plane = Vector3.zero;
+
+        if (!isInformationUI)
+        {
+            focusSlotUI.transform.DORotate(vertical, rotateDuration)
+                .OnComplete(() => {
+                    focusSlotUI.SetActive(false);
+                    flowerItemSpecific.gameObject.SetActive(true);
+                    flowerItemSpecific.transform.DORotate(plane, rotateDuration);
+                });
+
+            isInformationUI = true;
+        }
+        else
+        {
+            flowerItemSpecific.transform.DORotate(vertical, rotateDuration)
+                .OnComplete(() => {
+                    flowerItemSpecific.gameObject.SetActive(false);
+                    focusSlotUI.SetActive(true);
+                    focusSlotUI.transform.DORotate(plane, rotateDuration);
+                });
+
+            isInformationUI = false;
+        }
     }
 
     public void OnClickSaveButton()
@@ -256,17 +320,28 @@ public class FlowerPartyEditManager : MonoBehaviour
         UIManager.Instance.flowerPartyUIManager.SetBackgroundActive(true);
         UIManager.Instance.flowerPartyUIManager.SetFlowerPartyActive(true);
         UIManager.Instance.flowerPartyUIManager.partySlots.SetActive(true);
+
+        focusBouquetSlot.ClearFlowerBlockUI();
+
+        if (catchedBouquet != null)
+            catchedBouquet.SetHighlightActive(false);
+        catchedBouquet = null;
+
         gameObject.SetActive(false);
         UIManager.Instance.lobbyUI.SetActive(true);
     }
 
-    public void SetCatchedBouquet(FlowerBouquetUI flowerBouquetUI)
+    public void SetCatchedBouquet(FlowerBouquetPartyUI flowerBouquetUI)
     {
         catchedBouquet = flowerBouquetUI;
     }
-
-    public FlowerBouquetUI GetCatchedBouquet()
+    public FlowerBouquetPartyUI GetCatchedBouquet()
     {
         return catchedBouquet;
+    }
+
+    public FlowerItemUI.FlowerItemSpecificUI GetFlowerItemSpecificUI()
+    {
+        return this.flowerItemSpecific;
     }
 }

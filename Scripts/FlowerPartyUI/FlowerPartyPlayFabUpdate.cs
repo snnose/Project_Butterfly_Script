@@ -31,19 +31,14 @@ public class FlowerPartyPlayFabUpdate : MonoBehaviour
     private JSONObject GenerateUserFlowerBouquetListData(int presetNumber)
     {
         JSONObject userFlowerBouquetJSONList = new JSONObject(JSONObject.Type.Array);
-        int count = 1;
 
-        if (presetNumber == -1)
-        {
-            count = UserFlowerBouquetData.userFlowerBouquetListDictionary.Count;
-        }
-
-        for (int i = 1; i <= count; i++)
+        foreach (KeyValuePair<int, int[]> flowerBouquetListDictionary in UserFlowerBouquetData.userFlowerBouquetListDictionary)
         {
             JSONObject userFlowerBouquetJSON = new JSONObject(JSONObject.Type.Object);
-            userFlowerBouquetJSON.SetField("isSelected", UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[i]);
-            userFlowerBouquetJSON.SetField("id", i);
-            userFlowerBouquetJSON.AddField("bouquetList", GetMemberList(i));
+
+            userFlowerBouquetJSON.SetField("isSelected", UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[flowerBouquetListDictionary.Key]);
+            userFlowerBouquetJSON.SetField("id", flowerBouquetListDictionary.Key);
+            userFlowerBouquetJSON.AddField("bouquetList", GetMemberList(flowerBouquetListDictionary.Key));
 
             userFlowerBouquetJSONList.Add(userFlowerBouquetJSON);
         }
