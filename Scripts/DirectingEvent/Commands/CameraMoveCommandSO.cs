@@ -30,6 +30,11 @@ namespace DirectingEventSystem
             {
 
             }
+            else
+            {
+                DirectingEventManager.Instance.stageCamera.transform
+                    .DOMove(cameraMoveOption.initTransform.position + offset, 0f);
+            }
 
             if (cameraMoveOption.targetTransform == null)
             {

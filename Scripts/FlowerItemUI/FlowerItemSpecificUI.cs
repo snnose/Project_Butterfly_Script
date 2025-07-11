@@ -94,6 +94,9 @@ namespace FlowerItemUI
 
         private void SetItemOverview(UserFlowerBouquet userFlowerBouquet)
         {
+            if (userFlowerBouquet.id == 0)
+                return;
+
             SetRarity(userFlowerBouquet.rarity);
             SetNameAndLevel("", userFlowerBouquet.level - 1);
 

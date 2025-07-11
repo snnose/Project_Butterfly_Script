@@ -27,6 +27,10 @@ namespace DirectingEventSystem
         [SerializeField]
         private bool isFloatingDialogue = false;
 
+        public Dictionary<(int main, int sub), DirectingEventZone> eventZoneDictionary = new Dictionary<(int main, int sub), DirectingEventZone>();
+        public Dictionary<StageType, DirectingEventLoader> loaderDictionary = new Dictionary<StageType, DirectingEventLoader>();
+
+
         private List<int> optionIndex = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         private void Awake()
@@ -35,6 +39,8 @@ namespace DirectingEventSystem
                 instance = this;
             else
                 Destroy(this.gameObject);
+
+            // StageCamera 설정
         }
 
         private Queue<IEnumerator> directingEventQueue = new Queue<IEnumerator>();
@@ -47,6 +53,17 @@ namespace DirectingEventSystem
         public void ExecuteDirectingEvents()
         {
             isDirecting = true;
+            StartCoroutine(executeDirectingEvents());
+        }
+
+        public void ExecuteDirectingEvents(int mainProgress, int subProgress)
+        {
+            if (!eventZoneDictionary.ContainsKey((mainProgress, subProgress)))
+                return;
+
+            isDirecting = true;
+
+            eventZoneDictionary[(mainProgress, subProgress)].EnqueueEvents();
             StartCoroutine(executeDirectingEvents());
         }
 
@@ -68,6 +85,18 @@ namespace DirectingEventSystem
             isDirecting = false;
             ResetOptionIndex();
             SetUIActive(true);
+        }
+
+        public async void LoadDirectingEventZone(StageType stageType, int mainProgress, int subProgress)
+        {
+            DirectingEventLoader directingEventLoader = loaderDictionary[stageType];
+
+            await directingEventLoader.LoadDirectingEvent(stageType, mainProgress, subProgress);
+        }
+
+        public void AddDirectingEventLoader(StageType stageType, DirectingEventLoader directingEventLoader)
+        {
+            loaderDictionary[stageType] = directingEventLoader;
         }
 
         private void ClearDirectingEventQueue()
@@ -106,29 +135,16 @@ namespace DirectingEventSystem
             UIManager.Instance.SetNavigatorUIActive(isActive);
             UIManager.Instance.SetStageUIActive(isActive);
         }
+    }
 
-        private IEnumerator fadeOutObject(List<DirectingEventObject> eventObjectList, float duration)
-        {
-            int count = eventObjectList.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                DirectingEventObject eventObject = eventObjectList[i];
-                Component renderer = eventObject.GetRenderer();
-
-                if (renderer is SpriteRenderer spriteRenderer)
-                {
-                    spriteRenderer.DOFade(0f, duration);
-                }
-                else if (renderer is Spine.Unity.SkeletonAnimation skeletonAnimation)
-                {
-                    DOTween.To(() => skeletonAnimation.skeleton.A, x => skeletonAnimation.skeleton.A = x, 0f, duration);
-                }
-            }
-
-            yield return new WaitForSeconds(duration);
-
-            yield break;
-        }
+    /// <summary>
+    /// 섬 타입. FIXME: 추후 섬 이름에 대응하여 바꿔주어야 함.
+    /// </summary>
+    public enum StageType
+    {
+        None,
+        First,
+        Second,
+        Third,
     }
 }

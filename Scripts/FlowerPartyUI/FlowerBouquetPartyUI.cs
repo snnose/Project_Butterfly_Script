@@ -67,9 +67,9 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
         if (bouquetUIType != BouquetUIType.Item)
             return;
 
-        if (UIManager.Instance.flowerPartyEditManager.GetCatchedBouquet() != null)
+        if (UIManager.Instance.flowerPartyEditManager.GetSelectedBouquet() != null)
         {
-            UIManager.Instance.flowerPartyEditManager.GetCatchedBouquet().SetHighlightActive(false);
+            UIManager.Instance.flowerPartyEditManager.GetSelectedBouquet().SetHighlightActive(false);
         }
 
         FlowerPartyEditManager partyEditor = UIManager.Instance.flowerPartyEditManager;
@@ -79,8 +79,8 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
         partyEditor.partyEditCanvasGroup.blocksRaycasts = false;  // 드래그 중에는 Raycast 차단
         catchedBouquetUI = Instantiate(gameObject, partyEditor.transform);
 
-        partyEditor.SetCatchedBouquet(catchedBouquetUI.GetComponent<FlowerBouquetPartyUI>());
-        FlowerBouquetPartyUI catchedBouquet = partyEditor.GetCatchedBouquet();
+        partyEditor.SetSelectedBouquet(catchedBouquetUI.GetComponent<FlowerBouquetPartyUI>());
+        FlowerBouquetPartyUI catchedBouquet = partyEditor.GetSelectedBouquet();
         catchedBouquet.rectTransform = catchedBouquetUI.GetComponent<RectTransform>();
         catchedBouquet.rectTransform.sizeDelta = new Vector2(180f, 180f); // 하드코딩 : FlowerItemSlots의 CellSize 사양을 따름
         // 잡힌 UI Anchor preset을 middle center로 변경
@@ -102,7 +102,7 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
             UIManager.Instance.flowerPartyUIManager.flowerPartyUICanvas.transform as RectTransform, eventData.position, UIManager.Instance.GetUICamera(), out localPoint);
 
         // 드래그 중인 UI 요소를 마우스 위치로 이동
-        UIManager.Instance.flowerPartyEditManager.GetCatchedBouquet().rectTransform.anchoredPosition = localPoint;
+        UIManager.Instance.flowerPartyEditManager.GetSelectedBouquet().rectTransform.anchoredPosition = localPoint;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -111,7 +111,7 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
             return;
 
         FlowerPartyEditManager partyEditManager = UIManager.Instance.flowerPartyEditManager;
-        FlowerBouquetPartyUI catchedBouquet = partyEditManager.GetCatchedBouquet();
+        FlowerBouquetPartyUI catchedBouquet = partyEditManager.GetSelectedBouquet();
 
         FlowerBouquetPartyUI nearestTarget = FindNearestDropTarget(catchedBouquet.transform);
         if (nearestTarget != null
@@ -154,12 +154,12 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
         FlowerPartyEditManager partyEditManager = UIManager.Instance.flowerPartyEditManager;
 
         // 현재 Focus 중인 Bouquet을 다시 클릭 시 Focus 해제
-        if (partyEditManager.GetCatchedBouquet() != null
+        if (partyEditManager.GetSelectedBouquet() != null
             && partyEditManager.GetFocusSlot().bouquetId == this.bouquetId)
         {
-            partyEditManager.GetCatchedBouquet().SetHighlightActive(false);
+            partyEditManager.GetSelectedBouquet().SetHighlightActive(false);
             partyEditManager.GetFocusSlot().ClearFlowerBlockUI();
-            partyEditManager.SetCatchedBouquet(null);
+            partyEditManager.SetSelectedBouquet(null);
             partyEditManager.StopShakePartySlots();
             partyEditManager.GetFlowerItemSpecificUI().ClearItemSpecificUI();
             return;
@@ -167,9 +167,13 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
 
         partyEditManager.SetFocusSlot(bouquetId);
 
-        if (partyEditManager.GetCatchedBouquet() == null)
+        if (partyEditManager.GetSelectedBouquet() == null)
         {
-            partyEditManager.SetCatchedBouquet(this);
+            // 선택된 Bouquet가 없을 때, 빈 슬롯은 클릭할 수 없다.
+            if (this.bouquetId == 0)
+                return;
+
+            partyEditManager.SetSelectedBouquet(this);
             partyEditManager.GetFlowerItemSpecificUI().SetItemSpecificUI(this.bouquetId);
             SetHighlightActive(true);
 
@@ -182,13 +186,13 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
         else
         {
             // 이전에 클릭한 슬롯의 하이라이트 제거
-            partyEditManager.GetCatchedBouquet().SetHighlightActive(false);
+            partyEditManager.GetSelectedBouquet().SetHighlightActive(false);
 
             // 이전 클릭 슬롯과 같은 타입의 슬롯이면
-            if (bouquetUIType == partyEditManager.GetCatchedBouquet().bouquetUIType)
+            if (bouquetUIType == partyEditManager.GetSelectedBouquet().bouquetUIType)
             {
                 // 클릭한 슬롯 갱신
-                partyEditManager.SetCatchedBouquet(this);
+                partyEditManager.SetSelectedBouquet(this);
                 partyEditManager.GetFlowerItemSpecificUI().SetItemSpecificUI(this.bouquetId);
                 SetHighlightActive(true);
                 return;
@@ -196,10 +200,10 @@ public class FlowerBouquetPartyUI : FlowerBouquetUI, IBeginDragHandler, IDragHan
             // Party 슬롯 선택 후, Item 슬롯을 클릭한 경우
             if (bouquetUIType == BouquetUIType.Item)
             {
-                int num = partyEditManager.GetCatchedBouquet().slotNumber;
-                partyEditManager.GetCatchedBouquet().SetHighlightActive(false);
+                int num = partyEditManager.GetSelectedBouquet().slotNumber;
+                partyEditManager.GetSelectedBouquet().SetHighlightActive(false);
 
-                partyEditManager.SetCatchedBouquet(this);
+                partyEditManager.SetSelectedBouquet(this);
                 partyEditManager.ReplacePartySlotBouquet(num);
             }
             // Item 슬롯 선택 후, Party 슬롯을 클릭한 경우

@@ -6,9 +6,9 @@ using Defective.JSON;
 
 public class FlowerPartyPlayFabUpdate : MonoBehaviour
 {
-    public void UpdateUserFlowerBouquetListData(int presetNumber = -1)
+    public void UpdateUserFlowerBouquetListData()
     {
-        JSONObject userFlowerBouquetListData = GenerateUserFlowerBouquetListData(presetNumber);
+        JSONObject userFlowerBouquetListData = GenerateUserFlowerBouquetListData();
 
         ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
         {
@@ -28,7 +28,7 @@ public class FlowerPartyPlayFabUpdate : MonoBehaviour
             });
     }
 
-    private JSONObject GenerateUserFlowerBouquetListData(int presetNumber)
+    private JSONObject GenerateUserFlowerBouquetListData()
     {
         JSONObject userFlowerBouquetJSONList = new JSONObject(JSONObject.Type.Array);
 

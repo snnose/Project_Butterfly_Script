@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace DirectingEventSystem
         public bool isActivated = false;
 
         [Header("Proper Progress")]
-        private int properProgress;
+        [SerializeField] private (int main, int sub) properProgress;
 
         [Header("Collider")]
         public BoxCollider zoneCollider;
@@ -49,16 +49,21 @@ namespace DirectingEventSystem
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!isActivated && other.TryGetComponent(out PlayerController playerController))
+            // properProgress가 현재 유저의 progress와 같고
+            // 해당 연출 이벤트를 본 적이 없으면 연출
+            if (properProgress == UserParameterData.GetUserProgress("user_progress")
+                && !isActivated 
+                && other.TryGetComponent(out PlayerController playerController))
             {
-                Debug.Log("EventZone ����!");
+                Debug.Log("EventZone 입장!");
                 isActivated = true;
+                UserParameterData.IncreaseUserProgressData(false, true);
                 EnqueueEvents();
                 DirectingEventManager.Instance.ExecuteDirectingEvents();
             }
         }
 
-        private void EnqueueEvents()
+        public void EnqueueEvents()
         {
             int count = directingEventList.Count;
             for (int i = 0; i < count; i++)

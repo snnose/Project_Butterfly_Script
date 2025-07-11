@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class FlowerPartyUI : MonoBehaviour
 {
+    [SerializeField] private FlowerPartyUIManager flowerPartyUIManager;
     [SerializeField] public Transform flowerBouquetUIContainer;
     [SerializeField] public GameObject flowerBouquetUIPrefab;
     [SerializeField] public List<FlowerBouquetPartyUI> flowerBouquetUIList;
@@ -81,10 +82,26 @@ public class FlowerPartyUI : MonoBehaviour
 
     public void OnClickDeleteButton()
     {
+        if (UserFlowerBouquetData.userFlowerBouquetListDictionary.Count == 1)
+        {
+            ObjectPoolManager.Instance.RequestObject("ShadowPopup", "Shadow_Popup", "더 이상 삭제할 수 없습니다!");
+            return;
+        }
+
         int presetNum = UIManager.Instance.flowerPartyUIManager.GetCurrentPresetNumber();
 
         // 현 preset을 삭제
         UserFlowerBouquetData.userFlowerBouquetListDictionary.Remove(presetNum);
+
+        // 가장 낮은 번호 프리셋 선택
+        foreach (KeyValuePair<int, bool> isSelected in UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary)
+        {
+            flowerPartyUIManager.SetIsSelected(isSelected.Key);
+            break;
+        }
+
+        // 서버 갱신
+        flowerPartyUIManager.UpdatePlayFabFlowerParty();
 
         SetAddPresetButtonActive(true);
     }
@@ -95,8 +112,11 @@ public class FlowerPartyUI : MonoBehaviour
 
         // 현재 preset에 새 프리셋을 생성한다
         int[] bouquetList = new int[] { 0, 0, 0, 0, 0 };
+        currentPresetNumber = presetNum;
         currentBouquetList = bouquetList;
         UserFlowerBouquetData.userFlowerBouquetListDictionary[presetNum] = bouquetList;
+        flowerPartyUIManager.SetIsSelected(presetNum);
+        UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[presetNum] = true;
 
         // 편성되지 않은 FlowerBouquetUI 출력 
         ClearFlowerBouquetUI();

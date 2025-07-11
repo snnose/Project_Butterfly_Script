@@ -55,7 +55,7 @@ namespace DirectingEventSystem
 
                 if (objectMoveOption.isCameraFollow)
                 {
-                    DirectingEventManager.Instance.stageCamera.transform.DOMove(endPosition, objectMoveOption.duration).SetEase(objectMoveOption.ease);
+                    DirectingEventManager.Instance.stageCamera.transform.DOMove(endPosition + DirectingEventManager.Instance.cameraOffset, objectMoveOption.duration).SetEase(objectMoveOption.ease);
                 }
 
                 eventObjectTransform.DOMove(endPosition, objectMoveOption.duration).SetEase(objectMoveOption.ease)

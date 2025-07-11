@@ -13,7 +13,8 @@ public class FlowerPartyUIManager : MonoBehaviour
     [SerializeField] public GameObject partyEdit;
     // Inspector에서 할당할 UI 관련 참조들
     public Canvas flowerPartyUICanvas;
-    [SerializeField] private FlowerPartySwipe flowerPartySwipe;
+    [SerializeField] private FlowerPartyPlayFabUpdate flowerPartyPlayFabUpdate; // 플레이팹 서버 업데이트 담당 스크립트
+    [SerializeField] private FlowerPartySwipe flowerPartySwipe; // 파티 프리셋 스와이프 기능
     [SerializeField] public GameObject background;            // 배경
     [SerializeField] public RectTransform partyBackgrounds;       // 파티 UI 배경들이 들어갈 부모 컨테이너 (GridLayoutGroup이 붙어있음)
     [SerializeField] public GameObject partyBackground;       // 파티 UI 배경 프리팹
@@ -29,39 +30,6 @@ public class FlowerPartyUIManager : MonoBehaviour
     [SerializeField] private int maxPresetCount = 5;
 
     [SerializeField] private int currentPresetNumber;
-
-    /*
-    // UI 요소들을 동적으로 생성하는 메서드
-    public void SetFlowerPartyUI()
-    {
-        if(isInitialized)
-        {
-            return;
-        }
-
-        foreach (KeyValuePair<int, int[]> pair in UserFlowerBouquetData.userFlowerBouquetListDictionary)
-        {
-            int key = pair.Key;
-            int[] bouquetList = pair.Value;
-
-            FlowerPartyUI flowerPartyUI = flowerParty.GetComponent<FlowerPartyUI>();
-            flowerPartyUI.SetFlowerBouequetUI(key, bouquetList);
-
-            
-            if (key < 4) // 아직 빈 파티 슬롯이 있다면, 파티 추가 버튼을 활성화하고
-            {
-                addButtonPrefab.SetActive(true);
-                addButtonPrefab.transform.SetAsLastSibling(); // 파티 추가 버튼은 맨 마지막 정렬한다.
-            }
-            else // 순회 중 마지막 파티 슬롯까지 전체 사용중이라면, 파티 추가 버튼을 숨김 처리한다.
-            {
-                addButtonPrefab.SetActive(false);
-            }
-        }
-
-        isInitialized = true; // 초기 로드 플래그 변경
-    }
-    */
     public void InitializeFlowerPartyUI()
     {
         if (isInitialized)
@@ -75,23 +43,6 @@ public class FlowerPartyUIManager : MonoBehaviour
         isInitialized = true;
     }
 
-    /*
-    public void InitializeFlowerPartyUI()
-    {
-        if (isInitialized)
-            return;
-      
-        int selectedNumber = FindSelectedNumber();
-        InstantiateBackground(selectedNumber);
-
-        DOMoveBackgrounds(selectedNumber, 0f);
-        DOScaleBackgrounds(selectedNumber, 0f);
-        InstantiateFlowerParty(selectedNumber);
-        SetFlowerParty(selectedNumber);
-
-        isInitialized = true;
-    }
-    */
     public IEnumerator SwitchFlowerPartyUI(int targetNumber, float duration)
     {
         flowerParty.SetActive(false);
@@ -105,31 +56,7 @@ public class FlowerPartyUIManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         flowerParty.SetActive(true);
     }
-    /*
-    public void ResetFlowerPartyUI()
-    {
-        // 필요한 경우 컨테이너 초기화
-        foreach (Transform child in partyContainer)
-        {
-            Destroy(child.gameObject);
-        }
-    }
-    */
     
-    private void InstantiateBackground(int selectedNumber)
-    {
-        int count = maxPresetCount;
-
-        for (int i = 0; i < count; i++)
-        {
-            GameObject pbg = Instantiate(partyBackground, partyBackgrounds);
-            pbg.TryGetComponent(out FlowerPartyBackground flowerPartyBackground);
-            flowerPartyBackground.SetPresetNumber(i + 1);
-            flowerPartyBackground.SetPosition(selectedNumber, -backgroundYSpacing);
-            flowerPartyBackgroundList.Add(flowerPartyBackground);
-        }
-    }
-
     public int FindSelectedNumber()
     {
         int selectedNumber = -1;
@@ -145,7 +72,7 @@ public class FlowerPartyUIManager : MonoBehaviour
         return selectedNumber;
     }
 
-    private void SetIsSelected(int selectedNumber)
+    public void SetIsSelected(int selectedNumber)
     {
         UserFlowerBouquetData.userFlowerBouquetSelectedListDictionary[selectedNumber] = true;
 
@@ -220,6 +147,14 @@ public class FlowerPartyUIManager : MonoBehaviour
         {
             flowerPartyUI.SetAddPresetButtonActive(true);
         }
+    }
+
+    /// <summary>
+    /// PlayFab 서버의 FlowerParty 데이터를 갱신합니다.
+    /// </summary>
+    public void UpdatePlayFabFlowerParty()
+    {
+        flowerPartyPlayFabUpdate.UpdateUserFlowerBouquetListData();
     }
 
     public void SetCurrentPresetNumber(int presetNumber)

@@ -331,11 +331,11 @@ public class FlowerPartyEditManager : MonoBehaviour
         UIManager.Instance.lobbyUI.SetActive(true);
     }
 
-    public void SetCatchedBouquet(FlowerBouquetPartyUI flowerBouquetUI)
+    public void SetSelectedBouquet(FlowerBouquetPartyUI flowerBouquetUI)
     {
         catchedBouquet = flowerBouquetUI;
     }
-    public FlowerBouquetPartyUI GetCatchedBouquet()
+    public FlowerBouquetPartyUI GetSelectedBouquet()
     {
         return catchedBouquet;
     }
