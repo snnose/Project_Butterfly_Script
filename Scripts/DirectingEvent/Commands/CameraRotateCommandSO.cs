@@ -9,17 +9,15 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/CameraRotate")]
     public class CameraRotateCommandSO : DirectingEvent
     {
+        public CameraRotateOption cameraRotateOption;
+
         public override IEnumerator Execute()
         {
-            yield return RotateCamera(cameraRotateOptions);
+            yield return RotateCamera(cameraRotateOption);
         }
 
-        private IEnumerator RotateCamera(List<CameraRotateOption> cameraRotateOptions)
+        private IEnumerator RotateCamera(CameraRotateOption cameraRotateOption)
         {
-            int index = GetOptionIndex(OptionType.CameraRotate);
-            CameraRotateOption cameraRotateOption = cameraRotateOptions[index];
-            IncreaseOptionIndex(OptionType.CameraRotate);
-
             DirectingEventManager.Instance.stageCamera.transform.DORotate(cameraRotateOption.endRotation, cameraRotateOption.duration).SetEase(cameraRotateOption.ease);
 
             if (cameraRotateOption.isWaitForCompletion)

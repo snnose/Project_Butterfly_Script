@@ -7,17 +7,16 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectDestroy")]
     public class ObjectDestroyCommandSO : DirectingEvent
     {
+        public ObjectDestroyOption objectDestroyOption;
+
         public override IEnumerator Execute()
         {
-            yield return DestroyObject(objectDestroyOptions);
+            yield return DestroyObject(objectDestroyOption);
         }
 
-        private IEnumerator DestroyObject(List<ObjectDestroyOption> objectDestroyOptions)
+        private IEnumerator DestroyObject(ObjectDestroyOption objectDestroyOption)
         {
             // 애니메이션 모두 재생 -> Object FadeOut -> Destroy 하는 순서로?
-            int index = DirectingEventManager.Instance.GetOptionIndex()[(int)OptionType.ObjectDestroy];
-            ObjectDestroyOption objectDestroyOption = objectDestroyOptions[index];
-            DirectingEventManager.Instance.SetOptionIndexValue((int)OptionType.ObjectDestroy, ++index);
 
             int count = objectDestroyOption.targetObjects.Count;
             float delay = -1f;

@@ -7,17 +7,15 @@ using UnityEngine.Localization;
 [CreateAssetMenu(menuName = "DirectingEvent/Commands/FadeOutIn")]
 public class FadeOutInCommandSO : DirectingEvent
 {
+    public FadeOutInOption fadeOutInOption;
+
     public override IEnumerator Execute()
     {
-        yield return FadeOutIn(fadeOutInOptions);
+        yield return FadeOutIn(fadeOutInOption);
     }
 
-    private IEnumerator FadeOutIn(List<FadeOutInOption> fadeOutInOptions)
+    private IEnumerator FadeOutIn(FadeOutInOption fadeOutInOption)
     {
-        int index = GetOptionIndex(OptionType.FadeOutIn);
-        FadeOutInOption fadeOutInOption = fadeOutInOptions[index];
-        IncreaseOptionIndex(OptionType.FadeOutIn);
-
         FadeUIManager fadeUIManager = GetFadeUIManager();
 
         yield return fadeUIManager.FadeOut(fadeOutInOption.fadeType, fadeOutInOption.fadeOutColor, fadeOutInOption.fadeOutDuration);

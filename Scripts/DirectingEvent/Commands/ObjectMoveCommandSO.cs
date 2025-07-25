@@ -8,17 +8,15 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectMove")]
     public class ObjectMoveCommandSO : DirectingEvent
     {
+        public ObjectMoveOption objectMoveOption;
+
         public override IEnumerator Execute()
         {
-            yield return MoveObject(objectMoveOptions);
+            yield return MoveObject(objectMoveOption);
         }
 
-        private IEnumerator MoveObject(List<ObjectMoveOption> objectMoveOptions)
+        private IEnumerator MoveObject(ObjectMoveOption objectMoveOption)
         {
-            int index = GetOptionIndex(OptionType.ObjectMove);
-            ObjectMoveOption objectMoveOption = objectMoveOptions[index];
-            IncreaseOptionIndex(OptionType.ObjectMove);
-
             int count = objectMoveOption.targetObjects.Count;
             float delay = 0f;
 

@@ -7,17 +7,15 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/SpeechBubbleFloat")]
     public class SpeechBubbleFloatCommandSO : DirectingEvent
     {
+        public SpeechBubbleOption speechBubbleOption;
+
         public override IEnumerator Execute()
         {
-            yield return FloatSpeechBubble(speechBubbleOptions);
+            yield return FloatSpeechBubble(speechBubbleOption);
         }
 
-        private IEnumerator FloatSpeechBubble(List<SpeechBubbleOption> speechBubbleOptions)
+        private IEnumerator FloatSpeechBubble(SpeechBubbleOption speechBubbleOption)
         {
-            int index = GetOptionIndex(OptionType.SpeechBubbleFloat);
-            SpeechBubbleOption speechBubbleOption = speechBubbleOptions[index];
-            IncreaseOptionIndex(OptionType.SpeechBubbleFloat);
-
             // Bubble을 Addressable로 불러와 생성하고 다 쓰면 파괴하는 식으로?? 고민되네
             GameObject speechBubble = GetSpeechBubble();
             SpeechBubbleBehaviour speechBubbleBehaviour;

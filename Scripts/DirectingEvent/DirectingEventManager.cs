@@ -31,8 +31,6 @@ namespace DirectingEventSystem
         public Dictionary<StageType, DirectingEventLoader> loaderDictionary = new Dictionary<StageType, DirectingEventLoader>();
 
 
-        private List<int> optionIndex = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
         private void Awake()
         {
             if (instance == null)
@@ -83,7 +81,6 @@ namespace DirectingEventSystem
 
             // 이하 코드들은 초기화 구문으로 묶어서 관리 필요
             isDirecting = false;
-            ResetOptionIndex();
             SetUIActive(true);
         }
 
@@ -102,26 +99,6 @@ namespace DirectingEventSystem
         private void ClearDirectingEventQueue()
         {
             directingEventQueue.Clear();
-        }
-
-        private void ResetOptionIndex()
-        {
-            int count = optionIndex.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                optionIndex[i] = 0;
-            }
-        }
-
-        public void SetOptionIndexValue(int index, int value)
-        {
-            optionIndex[index] = value;
-        }
-
-        public List<int> GetOptionIndex()
-        {
-            return this.optionIndex;
         }
 
         public void SetIsFloatingDialogue(bool isFloating)

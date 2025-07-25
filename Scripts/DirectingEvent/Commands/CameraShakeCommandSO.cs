@@ -8,18 +8,15 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/CameraShake")]
     public class CameraShakeCommandSO : DirectingEvent
     {
+        public CameraShakeOption cameraShakeOption;
         public override IEnumerator Execute()
         {
-            yield return StageCameraShake(cameraShakeOptions);
+            yield return StageCameraShake(cameraShakeOption);
         }
 
-        private IEnumerator StageCameraShake(List<CameraShakeOption> cameraShakeOptions)
+        private IEnumerator StageCameraShake(CameraShakeOption cameraShakeOption)
         {
             Vector3 initPosition = DirectingEventManager.Instance.stageCamera.transform.position;
-
-            int index = DirectingEventManager.Instance.GetOptionIndex()[(int)OptionType.CameraShake];
-            CameraShakeOption cameraShakeOption = cameraShakeOptions[index];
-            DirectingEventManager.Instance.SetOptionIndexValue((int)OptionType.CameraShake, ++index);
 
             float deltaTime = 0f;
             while (deltaTime < cameraShakeOption.duration)

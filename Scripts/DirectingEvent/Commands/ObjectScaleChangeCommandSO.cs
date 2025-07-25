@@ -8,9 +8,11 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectScaleChange")]
     public class ObjectScaleChangeCommandSO : DirectingEvent
     {
+        ObjectScaleChangeOption objectScaleChangeOption;
+
         public override IEnumerator Execute()
         {
-            yield return ChangeObjectScale(objectScaleChangeOptions);
+            yield return ChangeObjectScale(objectScaleChangeOption);
         }
 
         private IEnumerator ChangeObjectScale(List<int> partialIndex)
@@ -18,12 +20,8 @@ namespace DirectingEventSystem
             yield break;
         }
 
-        private IEnumerator ChangeObjectScale(List<ObjectScaleChangeOption> objectScaleChangeOptions)
+        private IEnumerator ChangeObjectScale(ObjectScaleChangeOption objectScaleChangeOption)
         {
-            int index = DirectingEventManager.Instance.GetOptionIndex()[(int)OptionType.ObjectScaleChange];
-            ObjectScaleChangeOption objectScaleChangeOption = objectScaleChangeOptions[index];
-            DirectingEventManager.Instance.SetOptionIndexValue((int)OptionType.ObjectScaleChange, ++index);
-
             int count = objectScaleChangeOption.targetObjects.Count;
             float delay = -1f;
 

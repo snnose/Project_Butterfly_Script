@@ -7,12 +7,14 @@ namespace DirectingEventSystem
     [CreateAssetMenu(menuName = "DirectingEvent/Commands/DialogueFloat")]
     public class DialogueFloatCommandSO : DirectingEvent
     {
+        public DialogueOption dialogueOption;
+
         public override IEnumerator Execute()
         {
-            yield return FloatDialogue(dialogueOptions);
+            yield return FloatDialogue(dialogueOption);
         }
 
-        private IEnumerator FloatDialogue(List<DialogueOption> dialogueOptions)
+        private IEnumerator FloatDialogue(DialogueOption dialogueOption)
         {
             DialogueManager dialogueManager = CheckDialogueExist();
 
@@ -20,11 +22,7 @@ namespace DirectingEventSystem
             {
                 Debug.LogError($"DialogueFloatCommandSO : DialogueUI가 존재하지 않습니다!");
                 yield break;
-            }
-
-            int index = DirectingEventManager.Instance.GetOptionIndex()[(int)OptionType.DialogueFloat];
-            DialogueOption dialogueOption = dialogueOptions[index];
-            DirectingEventManager.Instance.SetOptionIndexValue((int)OptionType.DialogueFloat, ++index);          
+            }       
             
             List<Dialogue> dialogues = DialogueData.GetDialogueProgress(dialogueOption.progress);
             List<Dialogue> selectedDialogues = new List<Dialogue>();
