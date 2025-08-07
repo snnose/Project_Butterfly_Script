@@ -67,9 +67,10 @@ namespace FlowerItemUI
                             "이미 최대 레벨에 도달했습니다");
                 return;
             }
-
+            
             flowerItemEnhanceController.SetUserFlowerBouquet(userFlowerBouquet);
             flowerItemEnhanceController.gameObject.SetActive(true);
+            UIManager.Instance.ActiveGlobalVoume();
         }
 
         public void OnClickResetButton()
@@ -84,6 +85,7 @@ namespace FlowerItemUI
 
             flowerItemResetController.SetUserFlowerBouquet(userFlowerBouquet);
             flowerItemResetController.gameObject.SetActive(true);
+            UIManager.Instance.ActiveGlobalVoume();
         }
 
 

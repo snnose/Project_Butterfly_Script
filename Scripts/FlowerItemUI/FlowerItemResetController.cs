@@ -74,6 +74,7 @@ namespace FlowerItemUI
                 new
                 {
                     playFabId = PlayFabUserData.GetPlayFabId(),
+                    EntityId = PlayFabUserData.GetEntityTokenId(),
                     itemId = deepCopiedItem.id,
                 }, // 함수에 전달할 매개변수
 

@@ -42,6 +42,11 @@ namespace DirectingEventSystem
         public int progress;
     }
     [System.Serializable]
+    public struct CutSceneOption
+    {
+
+    }
+    [System.Serializable]
     public struct ObjectMoveOption
     {
         public bool isWaitForCompletion;

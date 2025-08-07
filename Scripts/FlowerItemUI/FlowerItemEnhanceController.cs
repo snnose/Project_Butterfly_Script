@@ -120,7 +120,8 @@ namespace FlowerItemUI
             var request = new ExecuteCloudScriptRequest
             {
                 FunctionName = "updateItemExp",
-                FunctionParameter = new { 
+                FunctionParameter = new {
+                    EntityId = PlayFabUserData.GetEntityTokenId(),
                     itemId = userFlowerBouquet.id,
                     addedExp = addedExp 
                 },

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.IO;
 using System.Linq;
 using System.Collections;
@@ -32,7 +32,7 @@ namespace DirectingEventSystem
 
         public override void OnInspectorGUI()
         {
-            // ±âº» ÀÎ½ºÆåÅÍ ±×¸®±â
+            // ê¸°ë³¸ ì¸ìŠ¤í™í„° ê·¸ë¦¬ê¸°
             DrawDefaultInspector();
 
             DrawEventOption();
@@ -49,16 +49,16 @@ namespace DirectingEventSystem
 
                 EditorGUILayout.BeginVertical(GUI.skin.box);
 
-                // ScriptableObject¸¦ ÇÒ´çÇÏ´Â ÇÊµå¸¦ ±×¸°´Ù.
+                // ScriptableObjectë¥¼ í• ë‹¹í•˜ëŠ” í•„ë“œë¥¼ ê·¸ë¦°ë‹¤.
                 EditorGUILayout.PropertyField(element, new GUIContent($"Event {i}"));
 
                 if (element.objectReferenceValue != null)
                 {
-                    // "Edit Details" ¶ó´Â ÀÌ¸§ÀÇ ÆîÄ¡±â/Á¢±â UI¸¦ ¸¸µç´Ù.
-                    // isExpanded´Â °¢ ¸®½ºÆ® ¿ä¼Ò°¡ °¡Áø ¼û°ÜÁø ¼Ó¼ºÀ¸·Î, ÆîÄ§ »óÅÂ¸¦ ±â¾ïÇÑ´Ù.
+                    // "Edit Details" ë¼ëŠ” ì´ë¦„ì˜ í¼ì¹˜ê¸°/ì ‘ê¸° UIë¥¼ ë§Œë“ ë‹¤.
+                    // isExpandedëŠ” ê° ë¦¬ìŠ¤íŠ¸ ìš”ì†Œê°€ ê°€ì§„ ìˆ¨ê²¨ì§„ ì†ì„±ìœ¼ë¡œ, í¼ì¹¨ ìƒíƒœë¥¼ ê¸°ì–µí•œë‹¤.
                     element.isExpanded = EditorGUILayout.Foldout(element.isExpanded, "Edit Details", true);
 
-                    // ÆîÃÄÁø »óÅÂ¶ó¸é
+                    // í¼ì³ì§„ ìƒíƒœë¼ë©´
                     if (element.isExpanded)
                     {
                         if (!editorCache.ContainsKey(element.objectReferenceValue))
@@ -79,7 +79,7 @@ namespace DirectingEventSystem
         }
 
         /// <summary>
-        /// "Add New Directing Event" ¹öÆ°À» ±×¸®°í, Å¬¸¯ ½Ã ¸Ş´º¸¦ ¶ç¿î´Ù.
+        /// "Add New Directing Event" ë²„íŠ¼ì„ ê·¸ë¦¬ê³ , í´ë¦­ ì‹œ ë©”ë‰´ë¥¼ ë„ìš´ë‹¤.
         /// </summary>
         private void DrawAddEventButton()
         {
@@ -91,31 +91,31 @@ namespace DirectingEventSystem
             {
                 GenericMenu menu = new GenericMenu();
 
-                // ReflectionÀ» »ç¿ëÇØ DirectingEvent¸¦ »ó¼Ó¹Ş´Â ¸ğµç »ı¼º °¡´ÉÇÑ(Ãß»óÀÌ ¾Æ´Ñ) Å¬·¡½º Å¸ÀÔÀ» Ã£´Â´Ù.
+                // Reflectionì„ ì‚¬ìš©í•´ DirectingEventë¥¼ ìƒì†ë°›ëŠ” ëª¨ë“  ìƒì„± ê°€ëŠ¥í•œ(ì¶”ìƒì´ ì•„ë‹Œ) í´ë˜ìŠ¤ íƒ€ì…ì„ ì°¾ëŠ”ë‹¤.
                 var eventTypes = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly => assembly.GetTypes())
                     .Where(type => type.IsSubclassOf(typeof(DirectingEvent)) && !type.IsAbstract);
 
-                // Ã£Àº °¢ Å¸ÀÔ¿¡ ´ëÇØ ¸Ş´º Ç×¸ñ Ãß°¡
+                // ì°¾ì€ ê° íƒ€ì…ì— ëŒ€í•´ ë©”ë‰´ í•­ëª© ì¶”ê°€
                 foreach (var type in eventTypes)
                 {
-                    // ¸Ş´º¿¡ Ç¥½ÃµÉ ÀÌ¸§ ¼³Á¤
+                    // ë©”ë‰´ì— í‘œì‹œë  ì´ë¦„ ì„¤ì •
                     string menuPath = ObjectNames.NicifyVariableName(type.Name);
                     menu.AddItem(new GUIContent(menuPath), false, () => CreateAndAddEvent(type));
                 }
 
-                // ¸Ş´º¸¦ ÇöÀç ¸¶¿ì½º À§Ä¡¿¡ Ç¥½Ã
+                // ë©”ë‰´ë¥¼ í˜„ì¬ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì— í‘œì‹œ
                 menu.ShowAsContext();
             }
         }
 
         private void CreateAndAddEvent(Type eventType)
         {
-            // ScriptableObject ÀÎ½ºÅÏ½º »ı¼º
+            // ScriptableObject ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
             var newEventInstance = ScriptableObject.CreateInstance(eventType);
             newEventInstance.name = "New " + eventType.Name;
 
-            // ¿¡¼ÂÀ» ÀúÀåÇÒ °æ·Î¸¦ ÁöÁ¤ÇÏ°í, Æú´õ°¡ ¾øÀ¸¸é »ı¼º
+            // ì—ì…‹ì„ ì €ì¥í•  ê²½ë¡œë¥¼ ì§€ì •í•˜ê³ , í´ë”ê°€ ì—†ìœ¼ë©´ ìƒì„±
             string folderPath = GetCurrentProjectFolderPath();
             string assetPath = AssetDatabase.GenerateUniqueAssetPath($"{folderPath}/{newEventInstance.name}.asset");
 
@@ -131,12 +131,12 @@ namespace DirectingEventSystem
         }
 
         /// <summary>
-        /// Unity ÇÁ·ÎÁ§Æ® Ã¢¿¡¼­ ÇöÀç ¼±ÅÃµÈ Æú´õÀÇ °æ·Î¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+        /// Unity í”„ë¡œì íŠ¸ ì°½ì—ì„œ í˜„ì¬ ì„ íƒëœ í´ë”ì˜ ê²½ë¡œë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
         /// </summary>
-        /// <returns>¼±ÅÃµÈ Æú´õÀÇ °æ·Î. À¯È¿ Æú´õ°¡ ¾Æ´Ï¸é "Assets"¸¦ ¹İÈ¯ÇÕ´Ï´Ù.</returns>
+        /// <returns>ì„ íƒëœ í´ë”ì˜ ê²½ë¡œ. ìœ íš¨ í´ë”ê°€ ì•„ë‹ˆë©´ "Assets"ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.</returns>
         private string GetCurrentProjectFolderPath()
         {
-            string path = "Assets"; // ±âº» °æ·Î´Â Assets Æú´õ
+            string path = "Assets"; // ê¸°ë³¸ ê²½ë¡œëŠ” Assets í´ë”
 
             foreach (var obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets))
             {
@@ -144,7 +144,7 @@ namespace DirectingEventSystem
 
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
-                    // ¼±ÅÃµÈ °ÍÀÌ ÆÄÀÏÀÌ¶ó¸é, ÇØ´ç ÆÄÀÏÀÌ ¼ÓÇÑ µğ·ºÅä¸® °æ·Î¸¦ »ç¿ë
+                    // ì„ íƒëœ ê²ƒì´ íŒŒì¼ì´ë¼ë©´, í•´ë‹¹ íŒŒì¼ì´ ì†í•œ ë””ë ‰í† ë¦¬ ê²½ë¡œë¥¼ ì‚¬ìš©
                     path = Path.GetDirectoryName(path);
                 }
                 break;
