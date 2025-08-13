@@ -4,6 +4,7 @@ using UnityEngine;
 using DirectingEventSystem;
 using UnityEngine.Localization;
 
+/*
 [CreateAssetMenu(menuName = "DirectingEvent/Commands/FadeOutIn")]
 public class FadeOutInCommandSO : DirectingEvent
 {
@@ -68,3 +69,4 @@ public class FadeOutInCommandSO : DirectingEvent
         return UIManager.Instance.fadeUIManager;
     }
 }
+*/

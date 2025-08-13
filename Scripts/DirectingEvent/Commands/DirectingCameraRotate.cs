@@ -1,14 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DirectingEventSystem;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/CameraRotate")]
-    public class CameraRotateCommandSO : DirectingEvent
+    public class DirectingCameraRotate : DirectingEvent
     {
         public CameraRotateOption cameraRotateOption;
 
@@ -28,4 +25,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

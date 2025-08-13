@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectMove")]
-    public class ObjectMoveCommandSO : DirectingEvent
+    public class DirectingObjectMove : DirectingEvent
     {
         public ObjectMoveOption objectMoveOption;
 
@@ -71,4 +69,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

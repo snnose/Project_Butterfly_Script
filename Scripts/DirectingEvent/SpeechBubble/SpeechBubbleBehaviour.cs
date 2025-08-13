@@ -228,4 +228,9 @@ public class SpeechBubbleBehaviour : MonoBehaviour
     {
         //bubbleLocalizeStringEvent.SetTable()
     }
+
+    public GameObject InstantiateBubble()
+    {
+        return Instantiate(this.gameObject);
+    }
 }

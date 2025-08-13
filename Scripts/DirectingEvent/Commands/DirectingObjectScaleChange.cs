@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectScaleChange")]
-    public class ObjectScaleChangeCommandSO : DirectingEvent
+    public class DirectingObjectScaleChange : DirectingEvent
     {
         ObjectScaleChangeOption objectScaleChangeOption;
 
@@ -59,4 +57,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

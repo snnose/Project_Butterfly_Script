@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/CameraShake")]
-    public class CameraShakeCommandSO : DirectingEvent
+    public class DirectingCameraShake : DirectingEvent
     {
         public CameraShakeOption cameraShakeOption;
         public override IEnumerator Execute()
@@ -36,4 +34,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

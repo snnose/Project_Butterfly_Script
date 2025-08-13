@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectDestroy")]
-    public class ObjectDestroyCommandSO : DirectingEvent
+    public class DirectingObjectDestroy : DirectingEvent
     {
         public ObjectDestroyOption objectDestroyOption;
 
@@ -59,7 +57,7 @@ namespace DirectingEventSystem
 
             for (int i = 0; i < count; i++)
             {
-                Destroy(objectDestroyOption.targetObjects[i].gameObject);
+                objectDestroyOption.targetObjects[i].DestroyObject();
                 objectDestroyOption.targetObjects[i] = null;
             }
 
@@ -67,4 +65,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

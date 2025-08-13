@@ -11,6 +11,16 @@ namespace DirectingEventSystem
         public SpriteRenderer spriteRenderer;
         public SkeletonAnimation skeletonAnimation;
 
+        public GameObject InstantiateObject(Vector3 spawnPosition, Quaternion quaternion)
+        {
+            return Instantiate(gameObject, spawnPosition, quaternion);
+        }
+
+        public void DestroyObject()
+        {
+            Destroy(this);
+        }
+
         public void SetAnimation(string animationName, bool isLoop)
         {
             if (skeletonAnimation == null)

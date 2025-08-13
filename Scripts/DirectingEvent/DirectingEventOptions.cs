@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,12 +7,15 @@ using TMPro;
 
 namespace DirectingEventSystem
 {
+    [AttributeUsage(AttributeTargets.Field)]
+    public class DirectingEventOptionAttribute : Attribute { }
+
     [System.Serializable]
     public struct CameraMoveOption
     {
         public bool isWaitForCompletion;
-        public Transform initTransform;
-        public Transform targetTransform;
+        public GameObject initObject;
+        public GameObject targetObject;
         public float duration;
         public Ease ease;
         public bool isReturn;

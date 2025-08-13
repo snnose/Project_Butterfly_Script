@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+/*
 namespace DirectingEventSystem
 {
     public class CutSceneCommandSO : DirectingEvent
@@ -13,3 +14,4 @@ namespace DirectingEventSystem
         }
     }
 }
+*/

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/ObjectInstantiate")]
-    public class ObjectInstantiateCommandSO : DirectingEvent
+    public class DirectingObjectInstantiate : DirectingEvent
     {
         ObjectInstantiateOption objectInstantiateOption;
 
@@ -31,7 +29,7 @@ namespace DirectingEventSystem
                 eventObjectPrefab = instantiateOption.gameObject;
             }
             // FIXME: parent를 stage로 설정해야함
-            GameObject eventObject = Instantiate(eventObjectPrefab, instantiateOption.spawnPosition, instantiateOption.spawnQuaternion);
+            GameObject eventObject = eventObjectPrefab.GetComponent<DirectingEventObject>().InstantiateObject(instantiateOption.spawnPosition, instantiateOption.spawnQuaternion);
 
             eventObject.transform.DOScale(instantiateOption.scale, instantiateOption.duration);
 
@@ -52,4 +50,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

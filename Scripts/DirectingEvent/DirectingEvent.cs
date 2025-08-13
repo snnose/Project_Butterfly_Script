@@ -6,10 +6,11 @@ using DG.Tweening;
 
 namespace DirectingEventSystem
 {
-   public abstract class DirectingEvent : ScriptableObject
+   [System.Serializable]
+   public abstract class DirectingEvent
     {
-        public abstract IEnumerator Execute();
-
         protected GameObject speechBubble;
+
+        public abstract IEnumerator Execute();
     }
 }

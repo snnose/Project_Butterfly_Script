@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/DialogueFloat")]
-    public class DialogueFloatCommandSO : DirectingEvent
+    public class DirectingDialogueFloat : DirectingEvent
     {
         public DialogueOption dialogueOption;
 
@@ -23,8 +21,8 @@ namespace DirectingEventSystem
             {
                 Debug.LogError($"DialogueFloatCommandSO : DialogueUI가 존재하지 않습니다!");
                 yield break;
-            }       
-            
+            }
+
             List<Dialogue> dialogues = DialogueData.GetDialogueProgress(dialogueOption.progress);
             List<Dialogue> selectedDialogues = new List<Dialogue>();
 
@@ -50,20 +48,19 @@ namespace DirectingEventSystem
             if (existingDialogueUI != null)
             {
                 existingDialogueUI.SetActive(true);
+                dialogueManager = existingDialogueUI.GetComponent<DialogueManager>();
             }
             else
             {
                 // 존재하지 않는 경우, instantiate
                 GameObject loadedPrefab = Resources.Load<GameObject>("DialogueUI");
-                existingDialogueUI = Instantiate(loadedPrefab, Vector3.zero, Quaternion.identity);
+                dialogueManager = loadedPrefab.GetComponent<DialogueManager>();
+                existingDialogueUI = dialogueManager.InstantiateDialogueUI(Vector3.zero, Quaternion.identity);
                 existingDialogueUI.transform.SetParent(UIManager.Instance.gameObject.transform);
                 existingDialogueUI.GetComponent<Canvas>().worldCamera = UIManager.Instance.GetUICamera(); // UI 카메라를 연결
             }
-
-            dialogueManager = existingDialogueUI.GetComponent<DialogueManager>();
 
             return dialogueManager;
         }
     }
 }
-*/

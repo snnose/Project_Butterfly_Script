@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/CameraMove")]
-    public class CameraMoveCommandSO : DirectingEvent
+    public class DirectingCameraMove : DirectingEvent
     {
-        public CameraMoveOption cameraMoveOption;
+        [SerializeField] 
+        public CameraMoveEventData dataTemplate;
+        public CameraMoveOption optionData;
 
         public override IEnumerator Execute()
         {
-            yield return MoveCamera(cameraMoveOption);
+            yield return MoveCamera(optionData);
         }
 
         private IEnumerator MoveCamera(CameraMoveOption cameraMoveOption)
@@ -23,7 +23,6 @@ namespace DirectingEventSystem
 
             Vector3 offset = DirectingEventManager.Instance.cameraOffset;
 
-            Transform targetTransform = cameraMoveOption.targetObject.transform;
 
             if (cameraMoveOption.initObject == null)
             {
@@ -34,11 +33,9 @@ namespace DirectingEventSystem
                 DirectingEventManager.Instance.stageCamera.transform
                     .DOMove(cameraMoveOption.initObject.transform.position + offset, 0f);
             }
-
-            if (cameraMoveOption.targetObject == null)
-            {
-                targetTransform = GameObject.FindWithTag("Player").transform;
-            }
+            
+            // 목표 Transform 설정 (null인 경우 캐릭터를 향한다)
+            Transform targetTransform = cameraMoveOption.targetObject != null ? cameraMoveOption.targetObject.transform : targetTransform = GameObject.FindWithTag("Player").transform;
 
             if (cameraMoveOption.hideJoyStick)
             {
@@ -60,4 +57,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/

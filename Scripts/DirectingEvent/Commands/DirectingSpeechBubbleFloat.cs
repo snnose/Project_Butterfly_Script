@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
 namespace DirectingEventSystem
 {
-    [CreateAssetMenu(menuName = "DirectingEvent/Commands/SpeechBubbleFloat")]
-    public class SpeechBubbleFloatCommandSO : DirectingEvent
+    public class DirectingSpeechBubbleFloat : DirectingEvent
     {
         public SpeechBubbleOption speechBubbleOption;
 
@@ -56,7 +54,7 @@ namespace DirectingEventSystem
             }
 
             yield return speechBubbleBehaviour.FloatSpeechBubble(speechBubbleOption.stringKeys, speechBubbleOption.stringPrintType,
-                                                                 speechBubbleOption.remainingDuration, speechBubbleOption.printSpeed, 
+                                                                 speechBubbleOption.remainingDuration, speechBubbleOption.printSpeed,
                                                                  speechBubbleOption.isBubbleShake, speechBubbleOption.isStringShake);
 
 
@@ -67,9 +65,9 @@ namespace DirectingEventSystem
         {
             if (speechBubble == null)
             {
-                GameObject speechBubblePrefab = Resources.Load<GameObject>("SpeechBubble/SpeechBubble");
+                SpeechBubbleBehaviour speechBubbleBehaviour = Resources.Load<GameObject>("SpeechBubble/SpeechBubble").GetComponent<SpeechBubbleBehaviour>();
                 // FIXME: parent 설정 고민해야함
-                speechBubble = Instantiate(speechBubblePrefab);
+                speechBubble = speechBubbleBehaviour.InstantiateBubble();
             }
             else
             {
@@ -121,4 +119,3 @@ namespace DirectingEventSystem
         }
     }
 }
-*/
